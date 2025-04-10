@@ -1,98 +1,90 @@
-PasswordCracker
-PasswordCracker is a standalone Java Swing application that simulates brute-force password cracking and secure password generation. It was developed as a GUI-based educational and experimental tool to demonstrate the basics of cryptographic hashing, brute-force techniques, and UI/UX design using Java.
+# PasswordCracker
 
-Overview
-The application supports two primary modes:
+**PasswordCracker** is a simple Java desktop app with a GUI that lets you either generate random passwords or try to brute-force crack a password you enter. It’s built with Java Swing and meant to be both educational and functional. 
 
-Crack My Password – Attempts to brute-force a password by generating candidate strings and comparing their SHA-256 hashes against the target.
+It shows how brute-force password cracking works under the hood, using hashing and recursion, and also includes a basic password generator with export capability.
 
-Generate Random Passwords – Generates a list of strong, random passwords using a configurable character set, including special characters.
+---
 
-Each mode provides a clean, responsive interface with real-time logging, user feedback, and interactive control over parameters like password length and generation count.
+## What It Does
 
-Features and Design
-1. Brute-Force Cracking (Crack My Password Mode)
-SHA-256 Hashing: When the user inputs a password, the application immediately computes its SHA-256 hash. The cracking process never sees the plain text—only the hash.
+### Crack My Password Mode
 
-Recursive Search: The application uses a recursive depth-first search algorithm to generate every possible string combination (a-z, A-Z, 0-9) up to a user-defined max length.
+- You type in a password, the app hashes it using SHA-256.
+- It then starts guessing strings (`a-z`, `A-Z`, `0-9`) recursively until it finds one that matches the hash.
+- You can set a max password length so it doesn’t run forever.
+- It shows live stats like how fast it’s guessing and an estimate of how long it might take.
 
-Multithreaded Execution: The cracking process runs on a background SwingWorker thread, keeping the UI responsive. Progress is reported live through a progress bar, speed tracker (attempts/sec), and an estimated time remaining display.
+This is mainly for demonstrating how brute-force actually works — it’s not optimized or fast like a real cracking tool, and it won’t handle long or complex passwords well.
 
-Real-World Use Case Simulation: This feature could hypothetically be used in scenarios like recovering forgotten passwords from hashed values or analyzing password strength in controlled environments.
+---
 
-Note: The cracking logic does not include special characters for performance reasons. Including them would drastically increase the search space.
+### Generate Random Passwords Mode
 
-2. Password Generation (Generate Random Passwords Mode)
-Customizable Output: Users can specify how many passwords to generate and whether to include special characters.
+- Generates a list of secure random passwords.
+- You can choose how many to generate and whether or not to include special characters.
+- Uses `SecureRandom`, so the generated passwords are strong and not predictable.
 
-Cryptographically Secure Randomness: Passwords are generated using SecureRandom, making them suitable for use in secure systems (within the limits of a demo app).
+Good for testing, temporary credentials, or just having a quick way to grab some secure passwords.
 
-Easy Export: Generated passwords can be saved to a .txt file using the built-in export feature. This is useful in a variety of scenarios, such as:
+---
 
-Pre-generating secure credentials for users or devices
+### Export Feature
 
-Transferring passwords for external storage or testing
+There’s a built-in export option to save all the generated passwords to a `.txt` file. You choose where to save — like a folder or USB drive.
 
-Passing data to another system that performs cracking offline (for example, importing the file into a GPU-accelerated cracking tool)
+In a real-world scenario, you might use this to:
+- Create a list of passwords to try cracking later with a more powerful tool
+- Move candidate passwords to another machine for offline testing
+- Store generated credentials for provisioning systems or audits
 
-3. Export Capability
-In either mode (but especially in generation mode), users can export results using the "Export All" option. The export functionality opens a directory chooser to allow writing the generated password list to a USB drive or any location on the file system.
+---
 
-In a hypothetical real-world scenario, a security researcher could use this mode to:
+## How It Works (Under the Hood)
 
-Generate a list of candidate passwords
+- The GUI is built with plain Java Swing.
+- The cracking function is recursive, trying every combination of characters up to the length you specify.
+- It runs in the background using a `SwingWorker`, so the app doesn’t freeze while cracking.
+- Password hashing is done with Java’s `MessageDigest` and SHA-256.
+- Random passwords are created with `SecureRandom` to ensure they’re not predictable.
 
-Export them to a portable drive
+---
 
-Move them to a more powerful cracking system (e.g., using Hashcat on a GPU rig)
+## Running It
 
-Compare hashes offline to reduce CPU burden on their main machine
+### Requirements
 
-This approach mirrors workflows used in penetration testing or digital forensics, where password hashes might be obtained from a compromised system and need to be tested elsewhere.
+- Java JDK 8 or higher
 
-Technical Stack
-Language: Java
+### Compile
 
-GUI Toolkit: Swing (JFrame, JPanel, JTextArea, etc.)
-
-Security: SHA-256 hashing via MessageDigest, randomness via SecureRandom
-
-Multithreading: SwingWorker for background tasks
-
-Layout: GridBagLayout for flexible input arrangement
-
-The project focuses on readability and interactivity rather than performance. For educational purposes, everything is handled within Java and intentionally avoids native optimizations or parallel GPU work.
-
-Building & Running
-Prerequisites
-Java JDK 8 or later
-
-Compile
-bash
-Copy
-Edit
+```bash
 javac PasswordCracker.java
-Run
-bash
-Copy
-Edit
+```
+
+### Run
+
+```bash
 java PasswordCracker
-Once running, the application presents an interactive GUI where you can select a mode and configure inputs.
+```
 
-Limitations
-Password Cracking: This app is not optimized for speed or large character sets. It is intentionally limited to simple brute-force to demonstrate the concept.
+---
 
-Hash Algorithms: Only SHA-256 is supported. No rainbow tables or salting mechanisms are implemented.
+## Limitations
 
-Charset: Cracking uses a-z, A-Z, and 0-9 only. Password generation allows more flexibility with special characters.
+- Cracking is limited to `a-z`, `A-Z`, and `0-9`. No special characters (on purpose, to keep it from being too slow).
+- It’s not meant to be a real hacking tool — more of a demonstration.
+- Only supports SHA-256 right now.
+- No salting or advanced hash comparison.
 
-Future Improvements
-Parallel cracking threads with timeout control
+---
 
-Support for importing hashed values from files
+## Possible Improvements
 
-Selectable hash algorithms (MD5, SHA-1, bcrypt, etc.)
+Stuff that could be added later:
 
-Adjustable generated password length
-
-Dark mode or modern UI frameworks like JavaFX
+- Multiple threads for faster cracking
+- Support for importing password hashes from a file
+- Bcrypt, SHA-1, or MD5 hash support
+- A dark mode or better UI with JavaFX
+- Option to set generated password length
